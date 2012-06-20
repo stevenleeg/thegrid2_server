@@ -1,4 +1,5 @@
 var fs = require("fs");
+var UpdateManager = require("../updatemanager").UpdateManager;
 
 var Grid = function(name, map) {
     this.name = name;
@@ -13,6 +14,8 @@ var Grid = function(name, map) {
 
     // Some placeholders
     this.users = {};
+    this.player_data = {};
+    this.matrix = {};
 
     // Open the map file
     this.map = require("../maps/" + map).map;
@@ -22,7 +25,7 @@ var Grid = function(name, map) {
     //
     this.getCoord = function(x, y) {
         // Does it already exist?
-        if(this.matrix[x][y] != undefined)
+        if(this.matrix[x] != undefined && this.matrix[x][y] != undefined)
             return this.matrix[x][y];
 
         // Nope. Let's create it
@@ -32,8 +35,31 @@ var Grid = function(name, map) {
             this.matrix[x][y] = {};
 
         this.matrix[x][y] = new Coord(this, x, y);
+        return this.matrix[x][y];
     }
 
+    //
+    // Dumps all coords
+    //
+    this.dump = function() {
+        var rets = {};
+        for(var x in this.matrix) {
+            for(var y in this.matrix[x]) {
+                rets[x + "_" + y] = this.getCoord(x,y).baseInfo();
+            }
+        }
+
+        return rets;
+    }
+
+    //
+    // Triggers a map event
+    //
+    this.trigger = function(event) {
+        if(this.map.events != undefined && this.map.events[event] != undefined)
+            this.map.events[event](this, UpdateManager);
+    }
+    
     //
     // Tests if a coordinate exists
     //
@@ -97,6 +123,9 @@ var Grid = function(name, map) {
             }
         }
     }
+
+    // Trigger an init event
+    this.trigger("init");
 }
 
 Grid.uid = 0;
@@ -107,6 +136,15 @@ var Coord = function(grid, x, y) {
     this.grid = grid;
     this.x = x;
     this.y = y;
+
+    this.baseInfo = function() {
+        return {
+            type: this.type,
+            player: this.player,
+            health: this.health,
+            rot: this.rot
+        }
+    }
 }
 
 exports.Grid = Grid;

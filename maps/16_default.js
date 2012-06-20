@@ -5,6 +5,7 @@ exports.map = {
 	"init_tused": 3,
 	"init_tlim": 6,
 	"init_cash": 500,
+    "size": 16,
 
     "colors": {
         0: "#FEBE07",
@@ -55,8 +56,18 @@ exports.map = {
 	},
 
 	"events": {
-		"init": ["0_0", "15_0"],
-		"join_1": ["1_1", "1_0", "0_1"],
-		"join_2": ["14_0", "15_1", "14_1"]
+		//"init": ["0_0", "15_0"],
+		//"join_1": ["1_1", "1_0", "0_1"],
+		//"join_2": ["14_0", "15_1", "14_1"]
+        "init": function(grid, UpdateManager) {
+            var coord;
+            coord = grid.getCoord(0,0);
+            coord.type = 99;
+            UpdateManager.sendCoord(coord);
+
+            coord = grid.getCoord(15, 0);
+            coord.type = 99;
+            UpdateManager.sendCoord(coord);
+        }
 	}
 }
