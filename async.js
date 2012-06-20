@@ -55,7 +55,7 @@ exports.Async = (function() {
     // in the waiting room)
     //
     var joinRoom = function(user, args) {
-        var pid, active;
+        var pid, active, grid;
 
         grid = Grid.store[args['gid']];
         if(grid == undefined)
