@@ -40,7 +40,7 @@ var User = function(connection) {
     //
     this.remove = function() {
         if(this.grid != undefined)
-            grid.delUser(this);
+            this.grid.delUser(this);
         delete User.store[this.id];
     }
 }
