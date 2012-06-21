@@ -25,11 +25,59 @@ exports.Map = function(grid) {
             },
             "15_0": {
                 type: 99
+            },
+            "0_15": {
+                type: 99
+            },
+            "15_15": {
+                type: 99
+            }
+        });
+    }
+
+    this.join_0 = function(grid, args) {
+        MapHelper.bulkUpdate(grid, {
+            "1_1": {
+                type: 2,
+                health: 100,
+                player: 0
+            },
+            "1_0": {
+                type: 1,
+                health: 25,
+                player: 0
+            },
+            "0_1": {
+                type: 1,
+                health: 25,
+                player: 0
+            }
+        });
+    }
+
+    this.join_1 = function(grid, args) {
+        MapHelper.bulkUpdate(grid, {
+            "14_0": {
+                type: 1,
+                health: 25,
+                player: 1
+            },
+            "15_1": {
+                type: 1,
+                health: 25,
+                player: 1
+            },
+            "14_1": {
+                type: 2,
+                health: 100,
+                player: 1
             }
         });
     }
     // Events object
     this.events = {
-        init: this.init
+        init: this.init,
+        "join_0": this.join_0,
+        "join_1": this.join_1
     }
 }
