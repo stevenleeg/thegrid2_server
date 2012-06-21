@@ -193,6 +193,10 @@ var Coord = function(grid, x, y) {
             rot: this.rot
         }
     }
+
+    this.toString = function() {
+        return this.x + "_" + this.y;
+    }
 }
 
 exports.Grid = Grid;

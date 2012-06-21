@@ -23,7 +23,7 @@ exports.UpdateManager = (function() {
     //
     var sendCoord = function(coord, exclude) {
         sendGrid(coord.grid, "set", {
-            coord: coord.to_s,
+            coord: coord.toString(),
             tile: coord.type,
             player: coord.player,
             health: coord.health
