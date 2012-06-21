@@ -7,7 +7,7 @@ exports.MapHelper = (function() {
     // the changes to any players.
     //
     var bulkUpdate = function(grid, coords) {
-        grid.bulkUpdate(coords);
+        grid.bulkModify(coords);
         
         for(var key in coords) {
             var coord = grid.getCoord(key);
