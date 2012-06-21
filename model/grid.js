@@ -88,7 +88,6 @@ var Grid = function(name, map) {
     //
     this.bulkModify = function(obj) {
         var coord;
-        console.log("BM called!");
         // Loop through the coords to be modified
         for(var i in obj) {
             coord = this.getCoord(i);
