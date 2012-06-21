@@ -18,16 +18,29 @@ var Grid = function(name, map) {
     this.matrix = {};
 
     // Open the map file
-    this.map = require("../maps/" + map).map;
+    var Map = new require("../maps/" + map).Map;
+    this.map = new Map();
     
     //
     // Gets a coord object
     //
     this.getCoord = function(x, y) {
+        // Looks like we're getting a string coord ugh
+        if(typeof x == "string" && y == undefined) {
+            var xy = x.split("_");
+            x = parseInt(xy[0]);
+            y = parseInt(xy[1]);
+        } else {
+            x = parseInt(x);
+            y = parseInt(y);
+        }
         // Does it already exist?
         if(this.matrix[x] != undefined && this.matrix[x][y] != undefined)
             return this.matrix[x][y];
 
+        // Ensure we're working only with ints
+        if(typeof x != "number" || typeof y != "number")
+            return false;
         // Nope. Let's create it
         if(this.matrix[x] == undefined)
             this.matrix[x] = {};
@@ -55,9 +68,36 @@ var Grid = function(name, map) {
     //
     // Triggers a map event
     //
-    this.trigger = function(event) {
+    this.trigger = function(event, args) {
+        if(this.map.events == undefined) return;
+
         if(this.map.events != undefined && this.map.events[event] != undefined)
-            this.map.events[event](this, UpdateManager);
+            this.map.events[event](this, args);
+    }
+
+    //
+    // Allows for bulk modification of coordinates
+    // The input is an object like this:
+    // { 
+    //     1_1: {
+    //         prop: val,
+    //         prop: val
+    //     },
+    //     ...
+    // }
+    //
+    this.bulkModify = function(obj) {
+        var coord;
+        console.log("BM called!");
+        // Loop through the coords to be modified
+        for(var i in obj) {
+            coord = this.getCoord(i);
+            // Loop through each property to be modified
+            for(var key in obj[i]) {
+                // Set the property
+                coord[key] = obj[i][key];
+            }
+        }
     }
     
     //
@@ -134,8 +174,17 @@ Grid.names = [];
 
 var Coord = function(grid, x, y) {
     this.grid = grid;
+    // Ensure we're working with numbers
+    if(typeof x != "number" || typeof y != "number")
+        throw "Invalid coordinate";
     this.x = x;
     this.y = y;
+
+    // Basic information
+    this.type = 0;
+    this.player = -1;
+    this.health = 0;
+    this.rot = 0;
 
     this.baseInfo = function() {
         return {

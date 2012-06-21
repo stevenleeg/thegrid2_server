@@ -15,13 +15,6 @@ exports.map = {
     },
 
 	"coords": {
-		"0_0": {
-			"type": 99
-		},
-		"15_0": {
-			"type": 99
-		},
-
 		"1_1": {
 			"type": 2,
 			"health": 100,
@@ -57,17 +50,9 @@ exports.map = {
 
 	"events": {
 		//"init": ["0_0", "15_0"],
-		//"join_1": ["1_1", "1_0", "0_1"],
-		//"join_2": ["14_0", "15_1", "14_1"]
-        "init": function(grid, UpdateManager) {
-            var coord;
-            coord = grid.getCoord(0,0);
-            coord.type = 99;
-            UpdateManager.sendCoord(coord);
-
-            coord = grid.getCoord(15, 0);
-            coord.type = 99;
-            UpdateManager.sendCoord(coord);
+		//"join_0": ["1_1", "1_0", "0_1"],
+		//"join_1": ["14_0", "15_1", "14_1"],
+        init: function(grid, UpdateManager) {
         }
 	}
 }
