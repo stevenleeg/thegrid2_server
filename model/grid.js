@@ -1,7 +1,7 @@
-var fs = require("fs");
-var UpdateManager = require("../updatemanager").UpdateManager;
-
 var Grid = function(name, map) {
+    // Why does this have to be here?
+    var Player = require("./user").Player;
+
     this.name = name;
     this.num_users = 0;
     this.active = false;
@@ -14,12 +14,17 @@ var Grid = function(name, map) {
 
     // Some placeholders
     this.users = {};
-    this.player_data = {};
     this.matrix = {};
 
     // Open the map file
     var Map = new require("../maps/" + map).Map;
     this.map = new Map();
+
+    // Generate the players object
+    this.players = {};
+    for(var i=0; i < this.map.maxPlayers; i++) {
+        this.players[i] = new Player(i);
+    }
     
     //
     // Gets a coord object
@@ -119,7 +124,7 @@ var Grid = function(name, map) {
         var pid;
         // If they're already in the game
         if(user.grid == this)
-            return user.pid;
+            return user.player.pid;
 
         // If they already have a pid
         if(pid != undefined) {
@@ -127,6 +132,7 @@ var Grid = function(name, map) {
                 return -1;
 
             this.users[pid] = user;
+            user.player = this.players[pid];
             this.num_users++;
             return pid;
         }
@@ -146,6 +152,7 @@ var Grid = function(name, map) {
         user.color = this.map.colors[pid];
         this.num_users++;
         this.users[pid] = user;
+        user.player = this.players[pid];
         return pid;
     }
 

@@ -48,4 +48,15 @@ var User = function(connection) {
 User.uid = 0;
 User.store = {};
 
+var Player = function(pid) {
+    this.pid = pid;
+    this.init = false;
+
+    this.cash = 0;
+    this.inc = 0;
+    this.tlim = 0;
+    this.tused = 0;
+}
+
 exports.User = User;
+exports.Player = Player;
