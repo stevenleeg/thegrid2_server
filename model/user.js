@@ -49,7 +49,7 @@ User.uid = 0;
 User.store = {};
 
 var Player = function(pid) {
-    this.pid = pid;
+    this.id = pid;
     this.init = false;
 
     this.cash = 0;

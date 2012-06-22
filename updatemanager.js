@@ -25,7 +25,7 @@ exports.UpdateManager = (function() {
         sendGrid(coord.grid, "set", {
             coord: coord.toString(),
             tile: coord.type,
-            player: coord.player,
+            player: coord.player.id,
             health: coord.health
         }, exclude)
     }

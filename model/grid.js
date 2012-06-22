@@ -25,6 +25,14 @@ var Grid = function(name, map) {
     for(var i=0; i < this.map.maxPlayers; i++) {
         this.players[i] = new Player(i);
     }
+
+    // Generate the matrix
+    for(var x = 0; x < this.map.size; x++) {
+        this.matrix[x] = {};
+        for(var y = 0; y < this.map.size; y++) {
+            this.matrix[x][y] = new Coord(this, x, y);
+        }
+    }
     
     //
     // Gets a coord object
@@ -46,13 +54,7 @@ var Grid = function(name, map) {
         // Ensure we're working only with ints
         if(typeof x != "number" || typeof y != "number")
             return false;
-        // Nope. Let's create it
-        if(this.matrix[x] == undefined)
-            this.matrix[x] = {};
-        if(this.matrix[x][y] == undefined)
-            this.matrix[x][y] = {};
 
-        this.matrix[x][y] = new Coord(this, x, y);
         return this.matrix[x][y];
     }
 
@@ -63,7 +65,9 @@ var Grid = function(name, map) {
         var rets = {};
         for(var x in this.matrix) {
             for(var y in this.matrix[x]) {
-                rets[x + "_" + y] = this.getCoord(x,y).baseInfo();
+                var coord = this.getCoord(x,y);
+                if(coord.exists())
+                    rets[x + "_" + y] = coord.baseInfo();
             }
         }
 
@@ -191,6 +195,10 @@ var Coord = function(grid, x, y) {
     this.player = -1;
     this.health = 0;
     this.rot = 0;
+
+    this.exists = function() {
+        return (this.type > 0) ? true : false;
+    }
 
     this.baseInfo = function() {
         return {

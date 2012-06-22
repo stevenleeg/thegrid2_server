@@ -1,6 +1,7 @@
 var User = require("./model/user").User;
 var Grid = require("./model/grid").Grid;
 var UpdateManager = require("./updatemanager").UpdateManager;
+var TileProps = require("./model/tileprops").TileProps;
 
 exports.Async = (function() {
     var ping = function(user, args) {
@@ -97,20 +98,19 @@ exports.Async = (function() {
         if(pid == -1)
             return {status: 406, error: "Grid is full"};
         
-        user.pid = pid;
         user.grid = grid;
         user.active = true;
         
-        if(grid.player_data[pid] == undefined) {
-            grid.player_data[pid] = user.player = {};
-            user.player['cash'] = grid.map.init_cash;
-            user.player['inc'] = 0;
-            user.player['lastInc'] = new Date();
-            user.player['tused'] = grid.map.init_tused;
-            user.player['tlim'] = grid.map.init_tlim;
+        if(user.player.init == false) {
+            user.player.cash = grid.map.init_cash;
+            user.player.inc = 0;
+            user.player.lastInc = new Date();
+            user.player.tused = grid.map.init_tused;
+            user.player.tlim = grid.map.init_tlim;
 
             // Trigger a join event on the grid
-            grid.trigger("join_" + pid);
+            grid.trigger("join_" + user.player.id);
+            user.player.init = true;
         }
 
         // Announce a new player!
@@ -147,12 +147,76 @@ exports.Async = (function() {
         return { status: 200 };
     }
 
+    var place = function(user, args) {
+        var coord, tile, props, placeable;
+
+        // TODO: Validation
+        coord = user.grid.getCoord(args['coord']);
+        tile = parseInt(args['tile']);
+        props = TileProps[tile];
+
+        // Are they trying to place it over an existing coord?
+        if(coord.type != 0 && !props.override)
+            return {
+                status: 405,
+                coord: coord.toString(),
+                error: "coord exists"
+            };
+
+        // This tile type doesn't even exist!
+        if(props == undefined)
+            return {
+                status: 406,
+                coord: coord.toString(),
+                error: "invalid tile"
+            };
+
+        placeable = props['place'](user.grid, coord, user);
+        if(!placeable)
+            return {
+                status: 412,
+                coord: coord.toString(),
+                error: "invalid placement"
+            };
+
+        // Make sure they have enough money for it
+        if(user.player.cash < props.price)
+            return {
+                status: 412,
+                coord: coord.toString(),
+                error: "not enough cash"
+            };
+
+        // Make sure they have enough territory if they're placing territory
+        if(tile == 1 && user.player.tused >= user.player.tlim)
+            return {
+                status: 412,
+                coord: coord.toString(),
+                error: "territory limit"
+            }
+
+        // Subtract the cash
+        user.player.cash -= props.price;
+        UpdateManager.sendUser(user, "setCash", {
+            cash: user.player.cash
+        });
+
+        coord.type = tile;
+        coord.player = user.player;
+        coord.health = props.health;
+
+        UpdateManager.sendCoord(coord);
+
+        return { status: 200 };
+    }
+
     return {
         ping: ping,
         getGrids: getGrids,
         createGrid: createGrid,
+        startGame: startGame,
         joinRoom: joinRoom,
         joinGrid: joinGrid,
-        startGame: startGame
+        place: place
     };
 })();
