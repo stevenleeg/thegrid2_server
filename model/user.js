@@ -10,28 +10,12 @@ var User = function(connection) {
     //
     // Used to call a function on the client
     //
-    this.call = function(func, payload) {
-        if(payload == undefined) payload = {};
-        payload['f'] = func;
+    this.trigger = function(event, data) {
+        var payload = {};
+        payload.e = event;
+        payload.data = data;
 
         this.connection.sendUTF(JSON.stringify(payload))
-    }
-
-    //
-    // Callback for receiving a message
-    //
-    this.on_message = function(msg) {
-        var ret;
-        try {
-            msg = JSON.parse(msg.utf8Data);
-        } catch(e) {
-            console.log("[usr:" + this.id + "] ERROR: Invalid JSON message");
-            return
-        }
-
-        ret = Async[msg['f']](this, msg);
-        ret['cid'] = msg['cid'];
-        this.connection.sendUTF(JSON.stringify(ret));
     }
 
     //
