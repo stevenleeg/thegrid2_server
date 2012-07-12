@@ -178,6 +178,21 @@ var Grid = function(name, map) {
     this.trigger("init");
 }
 
+Grid.getGrids = function() {
+    var store, send;
+    store = Grid.store;
+
+    send = [];
+    for(var i in store) {
+        send.push({
+            id: store[i].id,
+            name: store[i].name,
+        });
+    }
+
+    return send;
+}
+
 Grid.uid = 0;
 Grid.store = {};
 Grid.names = [];
