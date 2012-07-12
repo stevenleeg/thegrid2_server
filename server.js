@@ -31,7 +31,7 @@ srv.on("request", function(req) {
         return;
     }
     connection.user = new User(connection);
-    console.log("[usr:" + connection.user.id + "] User connected");
+    console.log("[usr:" + connection.user.id + "] Connected");
 
     connection.on("message", function(message) {
         var msg = JSON.parse(message.utf8Data);
@@ -39,6 +39,7 @@ srv.on("request", function(req) {
     });
 
     connection.on("close", function() {
+        console.log("[usr:" + connection.user.id + "] Disconnected");
         connection.user.remove();
     });
 });
