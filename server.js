@@ -19,6 +19,21 @@ EventManager.on("g.getGrids", function(user, data) {
         user.trigger("m.newGrid", grids[i]);
     }
 });
+EventManager.on("g.getMaps", function(user, data) {
+    var maps = [
+        {
+            name: "Sixteen",
+            size: 16,
+        }, {
+            name: "Thirty-two",
+            size: 32
+        }
+    ]
+
+    for(var i in maps) {
+        user.trigger("m.newMap", maps[i]);
+    }
+});
 EventManager.on("g.ping", function(user, data) {
     user.trigger("ping");
 });
