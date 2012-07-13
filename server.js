@@ -22,9 +22,11 @@ EventManager.on("g.getGrids", function(user, data) {
 EventManager.on("g.getMaps", function(user, data) {
     var maps = [
         {
+            id: 0,
             name: "Sixteen",
             size: 16,
         }, {
+            id: 1,
             name: "Thirty-two",
             size: 32
         }
