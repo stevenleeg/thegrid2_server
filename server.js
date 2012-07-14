@@ -11,34 +11,8 @@ var srv = new WebSocketServer({
     httpServer: app
 });
 
-// Some general events
-EventManager.on("g.getGrids", function(user, data) {
-    var grids = Grid.getGrids();
-
-    for(var i in grids) {
-        user.trigger("m.newGrid", grids[i]);
-    }
-});
-EventManager.on("g.getMaps", function(user, data) {
-    var maps = [
-        {
-            id: 0,
-            name: "Sixteen",
-            size: 16,
-        }, {
-            id: 1,
-            name: "Thirty-two",
-            size: 32
-        }
-    ]
-
-    for(var i in maps) {
-        user.trigger("m.newMap", maps[i]);
-    }
-});
-EventManager.on("g.ping", function(user, data) {
-    user.trigger("ping");
-});
+// Load general events
+require("./events");
 
 srv.on("request", function(req) {
     try {
