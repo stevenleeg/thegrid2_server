@@ -13,8 +13,15 @@ var Commands = (function() {
         });
     }
 
+    function getMaps(send) {
+        send({
+            e: "m.getMaps"
+        });
+    }
+
     return {
-        ping: ping
+        ping: ping,
+        getMaps: getMaps
     }
 })();
 
