@@ -43,9 +43,12 @@ EventManager.on("m.createGrid", function(user, data) {
     data.name = escape(data.name);
 
     // So now we create a room
-    grid = new Grid(data.name, data.map);
+    grid = new Grid(data.name, Maps[data.map]);
     grid.addUser(user);
 
+    user.trigger("m.createGridSuccess", {
+        id: grid.id,
+    });
 });
 
 EventManager.on("r.ping", function(user, data) {
