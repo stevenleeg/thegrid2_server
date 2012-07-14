@@ -1,4 +1,4 @@
-var User = require("./model/user").User;
+var User = require("../model/user").User;
 
 exports.UpdateManager = (function() {
     //

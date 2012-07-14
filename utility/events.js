@@ -1,6 +1,6 @@
 // General events
 var EventManager = require("./eventmanager").EventManager;
-var Grid = require("./model/grid").Grid;
+var Grid = require("../model/grid").Grid;
 
 EventManager.on("m.getGrids", function(user, data) {
     var grids = Grid.getGrids();

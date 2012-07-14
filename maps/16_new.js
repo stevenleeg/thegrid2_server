@@ -1,4 +1,4 @@
-var MapHelper = require("../maphelper.js").MapHelper;
+var MapHelper = require("../utility/maphelper.js").MapHelper;
 
 exports.Map = function(grid) {
     // Basic properties

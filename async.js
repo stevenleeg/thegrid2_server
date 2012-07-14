@@ -1,6 +1,6 @@
 var User = require("./model/user").User;
 var Grid = require("./model/grid").Grid;
-var UpdateManager = require("./updatemanager").UpdateManager;
+var UpdateManager = require("./utility/updatemanager").UpdateManager;
 var TileProps = require("./model/tileprops").TileProps;
 
 exports.Async = (function() {

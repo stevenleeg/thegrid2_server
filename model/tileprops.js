@@ -1,4 +1,4 @@
-var UpdateManager = require("../updatemanager").UpdateManager;
+var UpdateManager = require("../utility/updatemanager").UpdateManager;
 
 //
 // This object contains the properties of every tile
