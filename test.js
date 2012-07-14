@@ -24,9 +24,16 @@ var Commands = (function() {
         });
     }
 
+    function getGrids(send) {
+        send({
+            e: "m.getGrids"
+        });
+    }
+
     return {
         ping: ping,
-        getMaps: getMaps
+        getMaps: getMaps,
+        getGrids: getGrids
     }
 })();
 
