@@ -29,6 +29,7 @@ EventManager.on("m.getMaps", function(user, data) {
 });
 
 EventManager.on("m.createGrid", function(user, data) {
+    var grid;
     // Validate the data we need
     if(typeof(data.map) != "number")
         user.trigger("m.createGridError", {error: "map"});
@@ -40,7 +41,9 @@ EventManager.on("m.createGrid", function(user, data) {
     data.name = escape(data.name);
 
     // So now we create a room
-    user.grid = new Grid(data.name, data.map);
+    grid = new Grid(data.name, data.map);
+    grid.addUser(user);
+
 });
 
 EventManager.on("r.ping", function(user, data) {
