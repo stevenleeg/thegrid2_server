@@ -1,6 +1,7 @@
 // General events
 var EventManager = require("./eventmanager").EventManager;
 var Grid = require("../model/grid").Grid;
+var Maps = require("./maps").Maps;
 
 EventManager.on("m.getGrids", function(user, data) {
     var grids = Grid.getGrids();
@@ -11,17 +12,18 @@ EventManager.on("m.getGrids", function(user, data) {
 });
 
 EventManager.on("m.getMaps", function(user, data) {
-    var maps = [
-        {
-            id: 0,
-            name: "Sixteen",
-            size: 16,
-        }, {
-            id: 1,
-            name: "Thirty-two",
-            size: 32
-        }
-    ]
+    var maps = []
+    for(var i in Maps) {
+        var Map = require("../maps/" + Maps[i]).Map;
+        var map = new Map();
+        maps.push({
+            id: i,
+            name: map.name,
+            size: map.size
+        });
+        delete Map;
+        delete map;
+    }
 
     for(var i in maps) {
         user.trigger("m.newMap", maps[i]);

@@ -1,7 +1,8 @@
-var MapHelper = require("../utility/maphelper.js").MapHelper;
+var MapHelper = require("../utility/maps.js").MapHelper;
 
 exports.Map = function(grid) {
     // Basic properties
+    this.name = "Sixteen";
     this.maxPlayers = 4;
     this.autoGenerate = 1;
     this.tlim = 100;

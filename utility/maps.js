@@ -1,5 +1,10 @@
 var UpdateManager = require("./updatemanager").UpdateManager;
 
+// A list of maps!
+exports.Maps = {
+    0: "16_new",
+}
+
 exports.MapHelper = (function() {
     //
     // Applies a bulk update operation to a grid
