@@ -44,7 +44,6 @@ EventManager.on("m.createGrid", function(user, data) {
 
     // So now we create a room
     grid = new Grid(data.name, Maps[data.map]);
-    grid.addUser(user);
 
     user.trigger("m.createGridSuccess", {
         id: grid.id,
