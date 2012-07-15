@@ -51,5 +51,5 @@ EventManager.on("m.createGrid", function(user, data) {
 });
 
 EventManager.on("r.ping", function(user, data) {
-    user.trigger("ping");
+    user.trigger("r.ping");
 });
