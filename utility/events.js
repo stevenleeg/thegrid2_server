@@ -70,7 +70,7 @@ EventManager.on("m.joinGrid", function(user, data) {
         players.push(grid.users[i].player.id);
     }
 
-    EventManager.trigger("g"+grid.id+".newPlayer", {
+    EventManager.trigger("g"+grid.id+".newPlayer", user, {
         'pid': pid
     });
 
@@ -82,6 +82,12 @@ EventManager.on("m.joinGrid", function(user, data) {
         colors: grid.map.colors,
         players: players
     });
+});
+
+EventManager.on("r.sub", function(user, e_data) {
+     EventManager.on(e_data.e, function(other_user, data) {
+        user.trigger(e_data.e, data);
+     });
 });
 
 EventManager.on("r.ping", function(user, data) {
