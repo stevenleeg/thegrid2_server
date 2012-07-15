@@ -30,6 +30,14 @@ var EventManager = function() {
             callbacks[i](user, data);
         }
     }
+
+    // Create an event for the client subscribing to an event
+    var that = this;
+    this.on("r.sub", function(user, data) {
+         that.on(data.e, function(other_user, other_data) {
+            user.trigger(data.e, other_data);
+         });
+    });
 };
 
 exports.EventManager = new EventManager();
