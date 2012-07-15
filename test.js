@@ -14,7 +14,7 @@ function attempt_connect() {
 var Commands = (function() {
     function ping(send) {
         send({
-            e: "g.ping"
+            e: "r.ping"
         });
     }
 
@@ -30,8 +30,25 @@ var Commands = (function() {
         });
     }
 
+    function sub(send) {
+        send({
+            e: "r.sub",
+            data: {
+                e: "r.ping"
+            }
+        });
+        console.log("Sent subscription to r.ping");
+        setTimeout(function() {
+            console.log("Sent r.ping");
+            send({
+                e: "r.ping"
+            });
+        }, 1000);
+    }
+
     return {
         ping: ping,
+        sub: sub,
         getMaps: getMaps,
         getGrids: getGrids
     }
