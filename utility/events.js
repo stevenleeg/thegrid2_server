@@ -44,12 +44,46 @@ EventManager.on("m.createGrid", function(user, data) {
 
     // So now we create a room
     grid = new Grid(data.name, Maps[data.map]);
+    grid.host = user;
 
     user.trigger("m.createGridSuccess", {
         id: grid.id,
     });
 });
 
+EventManager.on("m.joinGrid", function(user, data) {
+    var grid, pid;
+    // Make sure we have an id
+    if(data.id == undefined || typeof(data.id) != "number")
+        return user.trigger("m.joinGridError", {error: "id"});
+    var grid = Grid.store[data.id];
+    // Make sure the grid exists
+    if(grid == undefined)   
+        return user.trigger("m.joinGridError", {error: "id"});
+    
+    // Add the user to the grid (and get a pid)
+    pid = grid.addUser(user);
+
+    // Create a list of player ids
+    var players = [];
+    for(var i in grid.users) {
+        players.push(grid.users[i].player.id);
+    }
+
+    EventManager.trigger("g"+grid.id+".newPlayer", {
+        'pid': pid
+    });
+
+    user.trigger("m.joinGridSuccess", {
+        id: grid.id,
+        pid: pid,
+        host: grid.host.player.id,
+        active: grid.active,
+        colors: grid.map.colors,
+        players: players
+    });
+});
+
 EventManager.on("r.ping", function(user, data) {
-    user.trigger("r.ping");
+    user.trigger("r.ping", { hello: "world" });
 });

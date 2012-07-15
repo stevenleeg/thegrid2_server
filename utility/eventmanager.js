@@ -25,6 +25,7 @@ var EventManager = function() {
      */
     this.trigger = function(event, user, data) {
         var callbacks = this.events[event];
+        console.log("Triggering: " + JSON.stringify(data));
 
         for(var i in callbacks) {
             callbacks[i](user, data);

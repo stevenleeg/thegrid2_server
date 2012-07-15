@@ -157,6 +157,7 @@ var Grid = function(name, map) {
         this.num_users++;
         this.users[pid] = user;
         user.player = this.players[pid];
+        user.player.active = true;
         return pid;
     }
 
@@ -168,6 +169,9 @@ var Grid = function(name, map) {
         for(var i in this.users) {
             if(this.users[i] == user) {
                 this.num_users--;
+                // Remove some properties from the user
+                user.player.active = false;
+                user.player = undefined;
                 delete this.users[i];
                 return true;
             }
