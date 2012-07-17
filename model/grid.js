@@ -22,6 +22,12 @@ var Grid = function(name, map) {
     // Register the eventhandler
     events.EventEmitter.call(this);
 
+    // And all of the user events
+    for(var event in Grid.UserEvents) {
+        this.on(event, Grid.UserEvents[event]);
+    }
+    delete(event);
+
     // Open the map file
     var Map = new require("../maps/" + map).Map;
     this.map = new Map();
@@ -154,11 +160,14 @@ var Grid = function(name, map) {
         if(pid == -1)
             return -1;
         
+        // Let everyone know
+        this.emit("addPlayer", pid);
         user.color = this.map.colors[pid];
         this.num_users++;
         this.users[pid] = user;
         user.player = this.players[pid];
         user.player.active = true;
+        user.grid = this;
         return pid;
     }
 
@@ -169,6 +178,8 @@ var Grid = function(name, map) {
         // TODO: A better way to do this?
         for(var i in this.users) {
             if(this.users[i] == user) {
+                console.log("yeah removing pid: " + user.player.id);
+                this.emit("delPlayer", user.player.id);
                 this.num_users--;
                 // Remove some properties from the user
                 user.player.active = false;
@@ -176,6 +187,12 @@ var Grid = function(name, map) {
                 delete this.users[i];
                 return true;
             }
+        }
+    }
+
+    this.sendUsers = function(event, data) {
+        for(var i in this.users) {
+            this.users[i].trigger(event, data);
         }
     }
 
@@ -196,6 +213,19 @@ Grid.getGrids = function() {
     }
 
     return send;
+}
+
+/*
+ * Event listeners that send data to users to keep them
+ * up to date
+ */
+Grid.UserEvents = {
+    addPlayer: function(pid) {
+        this.sendUsers("g.addPlayer", { pid: pid});
+    },
+    delPlayer: function(pid) {
+        this.sendUsers("g.delPlayer", { pid: pid });
+    }
 }
 util.inherits(Grid, events.EventEmitter);
 

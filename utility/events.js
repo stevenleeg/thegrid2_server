@@ -70,10 +70,6 @@ EventManager.on("m.joinGrid", function(user, data) {
         players.push(grid.users[i].player.id);
     }
 
-    EventManager.trigger("g"+grid.id+".newPlayer", user, {
-        'pid': pid
-    });
-
     user.trigger("m.joinGridSuccess", {
         id: grid.id,
         pid: pid,
