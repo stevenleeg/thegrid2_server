@@ -26,7 +26,7 @@ srv.on("request", function(req) {
 
     connection.on("message", function(message) {
         var msg = JSON.parse(message.utf8Data);
-        EventManager.trigger(msg.e, connection.user, msg.data);
+        EventManager.emit(msg.e, connection.user, msg.data);
     });
 
     connection.on("close", function() {

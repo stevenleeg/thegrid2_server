@@ -19,8 +19,8 @@ exports.Map = function(grid) {
         3: "#3FCD45"
     };
 
-    this.init = function(grid, args) {
-        grid.bulkModify({
+    this.init = function() {
+        this.bulkModify({
             "0_0": {
                 type: 99
             },
@@ -36,8 +36,8 @@ exports.Map = function(grid) {
         });
     }
 
-    this.join_0 = function(grid, args) {
-        MapHelper.bulkUpdate(grid, {
+    this.join_0 = function() {
+        MapHelper.bulkUpdate(this, {
             "1_1": {
                 type: 2,
                 health: 100,
@@ -56,8 +56,8 @@ exports.Map = function(grid) {
         });
     }
 
-    this.join_1 = function(grid, args) {
-        MapHelper.bulkUpdate(grid, {
+    this.join_1 = function() {
+        MapHelper.bulkUpdate(this, {
             "14_0": {
                 type: 1,
                 health: 25,
