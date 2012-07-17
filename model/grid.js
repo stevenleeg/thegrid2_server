@@ -178,13 +178,24 @@ var Grid = function(name, map) {
         // TODO: A better way to do this?
         for(var i in this.users) {
             if(this.users[i] == user) {
-                console.log("yeah removing pid: " + user.player.id);
                 this.emit("delPlayer", user.player.id);
                 this.num_users--;
+
                 // Remove some properties from the user
                 user.player.active = false;
                 user.player = undefined;
                 delete this.users[i];
+
+                if(this.num_users == 0)
+                    return Grid.remove(this);
+                // See if we need a new host
+                if(this.host == user) {
+                    for(var new_host in this.users) break;
+                    new_host = this.users[new_host];
+                    this.host = new_host;
+                    this.emit("newHost", new_host);
+                }
+
                 return true;
             }
         }
@@ -215,6 +226,11 @@ Grid.getGrids = function() {
     return send;
 }
 
+Grid.remove = function(grid) {
+    console.log("[g:" + grid.id + "] Deleting " + grid.name);
+    delete(Grid.store[grid.id]);
+}
+
 /*
  * Event listeners that send data to users to keep them
  * up to date
@@ -225,6 +241,9 @@ Grid.UserEvents = {
     },
     delPlayer: function(pid) {
         this.sendUsers("g.delPlayer", { pid: pid });
+    },
+    newHost: function(user) {
+        this.sendUsers("g.newHost", { pid: user.player.id });
     }
 }
 util.inherits(Grid, events.EventEmitter);
