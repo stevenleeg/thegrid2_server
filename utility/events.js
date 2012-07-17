@@ -64,6 +64,9 @@ EventManager.on("m.joinGrid", function(user, data) {
     // Add the user to the grid (and get a pid)
     pid = grid.addUser(user);
 
+    if(pid == -1) 
+        user.trigger("m.joinGridError", { error: "full" });
+
     // Create a list of player ids
     var players = [];
     for(var i in grid.users) {
