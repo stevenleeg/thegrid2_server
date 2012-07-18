@@ -203,7 +203,7 @@ var Grid = function(name, map) {
 
     this.sendUsers = function(event, data) {
         for(var i in this.users) {
-            this.users[i].trigger(event, data);
+            this.users[i].send(event, data);
         }
     }
 

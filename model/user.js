@@ -1,4 +1,6 @@
 var Async = require("../async").Async;
+var events = require("events");
+var util = require("util");
 
 var User = function(connection) {
     // Generate a uid
@@ -7,10 +9,12 @@ var User = function(connection) {
     this.connection = connection;
     User.store[this.id] = this;
 
+    events.EventEmitter.call(this);
+
     //
     // Used to call a function on the client
     //
-    this.trigger = function(event, data) {
+    this.send = function(event, data) {
         var payload = {};
         payload.e = event;
         payload.data = data;
@@ -28,6 +32,7 @@ var User = function(connection) {
         delete User.store[this.id];
     }
 }
+util.inherits(User, events.EventEmitter);
 
 User.uid = 0;
 User.store = {};
