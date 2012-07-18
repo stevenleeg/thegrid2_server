@@ -162,12 +162,23 @@ var Grid = function(name, map) {
         
         // Let everyone know
         this.emit("addPlayer", pid);
-        user.color = this.map.colors[pid];
+        // Increase the user count
         this.num_users++;
+
+        // Set their color TODO: Is this used anywhere?
+        user.color = this.map.colors[pid];
         this.users[pid] = user;
+
+        // Set up the player
         user.player = this.players[pid];
         user.player.active = true;
+
+        // Assign the user to us
         user.grid = this;
+        // Set up event listeners
+        for(var i in Grid.UserListeners) {
+            user.on(i, Grid.UserListeners[i]);
+        }
         return pid;
     }
 
@@ -244,6 +255,21 @@ Grid.UserEvents = {
     },
     newHost: function(user) {
         this.sendUsers("g.newHost", { pid: user.player.id });
+    },
+    startGrid: function() {
+        this.sendUsers("g.startGrid");
+    }
+}
+
+/*
+ * Event handlers that listen for user data
+ */
+Grid.UserListeners = {
+    'g.startGrid': function(user, data) {
+        var grid = user.grid;
+        if(user.grid.host != user)
+            return;
+        grid.emit("startGrid");
     }
 }
 util.inherits(Grid, events.EventEmitter);
