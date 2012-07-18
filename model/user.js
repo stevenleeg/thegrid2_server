@@ -1,4 +1,5 @@
 var Async = require("../async").Async;
+var EventManager = require("../utility/eventmanager").EventManager;
 var events = require("events");
 var util = require("util");
 
@@ -9,6 +10,7 @@ var User = function(connection) {
     this.connection = connection;
     User.store[this.id] = this;
 
+    var that = this;
     events.EventEmitter.call(this);
 
     //
@@ -31,6 +33,19 @@ var User = function(connection) {
             this.grid.delUser(this);
         delete User.store[this.id];
     }
+
+    // Used for the menu when a new grid is created
+    this.newGrid = function(grid) {
+        that.send("m.newGrid", { id: grid.id, name: grid.name });
+    }
+
+    // Called when the user joins a grid
+    this.joinGrid = function() {
+        EventManager.off("m.newGrid", that.newGrid);
+    }
+
+    EventManager.on("m.newGrid", this.newGrid);
+    this.on("joinGrid", this.joinGrid);
 }
 util.inherits(User, events.EventEmitter);
 

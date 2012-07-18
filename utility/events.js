@@ -47,6 +47,9 @@ exports.UserEvents = {
         grid = new Grid(data.name, Maps[data.map]);
         grid.host = user;
 
+        // Let everyone else know
+        EventManager.emit("m.newGrid", grid);
+
         user.send("m.createGridSuccess", {
             id: grid.id,
         });

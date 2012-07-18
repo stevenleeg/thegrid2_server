@@ -24,7 +24,7 @@ srv.on("request", function(req) {
     connection.user = new User(connection);
     console.log("[usr:" + connection.user.id + "] Connected");
 
-    // Load all default listners
+    // Load all default listeners
     for(var i in UserEvents) {
         connection.user.on(i, UserEvents[i]);
     }
