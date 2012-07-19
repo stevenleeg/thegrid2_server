@@ -258,6 +258,7 @@ Grid.UserEvents = {
     },
     startGrid: function() {
         this.sendUsers("g.startGrid");
+        this.active = true;
     }
 }
 
