@@ -30,7 +30,7 @@ var Grid = function(name, map) {
 
     // Open the map file
     var Map = new require("../maps/" + map).Map;
-    this.map = new Map();
+    this.map = new Map(this);
 
     // Register any events
     for(var i in this.map.events) {
@@ -112,6 +112,7 @@ var Grid = function(name, map) {
                 // Set the property
                 coord[key] = obj[i][key];
             }
+            this.emit("updateCoord", coord);
         }
     }
     

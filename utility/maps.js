@@ -1,5 +1,3 @@
-var UpdateManager = require("./updatemanager").UpdateManager;
-
 // A list of maps!
 exports.Maps = {
     0: "16_new",

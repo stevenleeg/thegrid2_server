@@ -2,6 +2,7 @@ var MapHelper = require("../utility/maps.js").MapHelper;
 
 exports.Map = function(grid) {
     // Basic properties
+    var that = this;
     this.name = "Sixteen";
     this.maxPlayers = 4;
     this.autoGenerate = 1;
@@ -20,7 +21,7 @@ exports.Map = function(grid) {
     };
 
     this.init = function() {
-        this.bulkModify({
+        that.grid.bulkModify({
             "0_0": {
                 type: 99
             },
@@ -36,49 +37,47 @@ exports.Map = function(grid) {
         });
     }
 
-    this.join_0 = function() {
-        MapHelper.bulkUpdate(this, {
-            "1_1": {
-                type: 2,
-                health: 100,
-                player: 0
-            },
-            "1_0": {
-                type: 1,
-                health: 25,
-                player: 0
-            },
-            "0_1": {
-                type: 1,
-                health: 25,
-                player: 0
-            }
-        });
-    }
-
-    this.join_1 = function() {
-        MapHelper.bulkUpdate(this, {
-            "14_0": {
-                type: 1,
-                health: 25,
-                player: 1
-            },
-            "15_1": {
-                type: 1,
-                health: 25,
-                player: 1
-            },
-            "14_1": {
-                type: 2,
-                health: 100,
-                player: 1
-            }
-        });
+    this.addPlayer = function(pid) {
+        if(pid == 0)
+            that.grid.bulkModify({
+                "1_1": {
+                    type: 2,
+                    health: 100,
+                    player: 0
+                },
+                "1_0": {
+                    type: 1,
+                    health: 25,
+                    player: 0
+                },
+                "0_1": {
+                    type: 1,
+                    health: 25,
+                    player: 0
+                }
+            });
+        else if(pid ==1)
+            that.grid.bulkModify({
+                "14_0": {
+                    type: 1,
+                    health: 25,
+                    player: 1
+                },
+                "15_1": {
+                    type: 1,
+                    health: 25,
+                    player: 1
+                },
+                "14_1": {
+                    type: 2,
+                    health: 100,
+                    player: 1
+                }
+            });
     }
     // Events object
     this.events = {
         init: this.init,
-        "join_0": this.join_0,
-        "join_1": this.join_1
+        addPlayer: this.addPlayer,
     }
 }

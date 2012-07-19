@@ -83,7 +83,8 @@ exports.UserEvents = {
             host: grid.host.player.id,
             active: grid.active,
             colors: grid.map.colors,
-            players: players
+            players: players,
+            grid: grid.dump()
         });
     },
 
