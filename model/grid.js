@@ -260,7 +260,16 @@ Grid.UserEvents = {
     startGrid: function() {
         this.sendUsers("g.startGrid");
         this.active = true;
-    }
+    },
+    updateCoord: function(coord) {
+        this.sendUsers("g.updateCoord", {
+            coord: coord.toString(),
+            player: coord.player,
+            type: coord.type,
+            health: coord.health
+            // TODO: Rotation data?
+        });
+    },
 }
 
 /*
@@ -272,6 +281,9 @@ Grid.UserListeners = {
         if(user.grid.host != user)
             return;
         grid.emit("startGrid");
+    },
+    "g.getDump": function(user, data) {
+        user.send("g.setDump", user.grid.dump());
     }
 }
 util.inherits(Grid, events.EventEmitter);

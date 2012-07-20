@@ -84,7 +84,6 @@ exports.UserEvents = {
             active: grid.active,
             colors: grid.map.colors,
             players: players,
-            grid: grid.dump()
         });
     },
 

@@ -35,6 +35,10 @@ exports.Map = function(grid) {
                 type: 99
             }
         });
+
+        for(var i in this.users) {
+            that.addPlayer(this.users[i].player.id);
+        }
     }
 
     this.addPlayer = function(pid) {
