@@ -261,6 +261,12 @@ Grid.UserEvents = {
         this.sendUsers("g.startGrid");
         this.active = true;
     },
+    newChat: function(user, message) {
+        this.sendUsers("g.newChat", {
+            pid: user.player.id,
+            msg: message
+        });
+    },
     updateCoord: function(coord) {
         this.sendUsers("g.updateCoord", {
             coord: coord.toString(),
@@ -284,6 +290,9 @@ Grid.UserListeners = {
     },
     "g.getDump": function(user, data) {
         user.send("g.setDump", user.grid.dump());
+    },
+    "g.sendChat": function(user, data) {
+        user.grid.emit("newChat", user, data.msg.substring(0,140));
     }
 }
 util.inherits(Grid, events.EventEmitter);
