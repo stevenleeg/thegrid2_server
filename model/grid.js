@@ -168,6 +168,11 @@ var Grid = function(name, map) {
         user.player = this.players[pid];
         user.player.active = true;
 
+        // Do we need to assume the position of host?
+        if(this.num_users == 1) {
+            this.host = user;
+        }
+
         // Assign the user to us
         user.grid = this;
         // Set up event listeners
@@ -195,7 +200,7 @@ var Grid = function(name, map) {
                 if(this.num_users == 0)
                     return Grid.remove(this);
                 // See if we need a new host
-                if(this.host == user) {
+                if(this.host == user && this.num_users != 0) {
                     for(var new_host in this.users) break;
                     new_host = this.users[new_host];
                     this.host = new_host;
@@ -233,8 +238,13 @@ Grid.getGrids = function() {
 }
 
 Grid.remove = function(grid) {
-    console.log("[g:" + grid.id + "] Deleting " + grid.name);
-    delete(Grid.store[grid.id]);
+    setTimeout(function() {
+        // If it has a user after a minute let it be.
+        if(grid == undefined || grid.num_users > 0)
+            return;
+        console.log("[g:" + grid.id + "] Deleting " + grid.name);
+        delete(Grid.store[grid.id]);
+    }, 60000);
 }
 
 /*
