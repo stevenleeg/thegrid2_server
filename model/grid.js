@@ -139,22 +139,16 @@ var Grid = function(name, map) {
             return user.player.pid;
 
         // If they already have a pid
-        if(pid != undefined) {
-            if(this.users[pid] != undefined)
+        if(pid != undefined && this.users[pid] != undefined) {
                 return -1;
-
-            this.users[pid] = user;
-            user.player = this.players[pid];
-            this.num_users++;
-            return pid;
-        }
-
-        // I guess we'll have to generate one
-        pid = -1;
-        for(var i = 0; i < this.map.maxPlayers; i++) {
-            if(this.users[i] == undefined) {
-                pid = i;
-                break;
+        } else {
+            // I guess we'll have to generate one
+            pid = -1;
+            for(var i = 0; i < this.map.maxPlayers; i++) {
+                if(this.users[i] == undefined) {
+                    pid = i;
+                    break;
+                }
             }
         }
         // The room is full

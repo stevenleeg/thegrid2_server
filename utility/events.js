@@ -66,7 +66,7 @@ exports.UserEvents = {
             return user.send("m.joinGridError", {error: "id"});
         
         // Add the user to the grid (and get a pid)
-        pid = grid.addUser(user);
+        pid = grid.addUser(user, data.pid);
 
         if(pid == -1) 
             return user.send("m.joinGridError", { error: "full" });
