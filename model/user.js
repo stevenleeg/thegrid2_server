@@ -31,6 +31,8 @@ var User = function(connection) {
     this.remove = function() {
         if(this.grid != undefined)
             this.grid.delUser(this);
+
+        EventManager.removeListener("m.newGrid", this.newGrid);
         delete User.store[this.id];
     }
 
