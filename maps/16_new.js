@@ -12,6 +12,7 @@ exports.Map = function(grid) {
     this.init_cash = 500;
     this.size = 16;
     this.grid = grid;
+    this.players_init = [];
 
     this.colors = {
         0: "#FEBE07",
@@ -42,7 +43,7 @@ exports.Map = function(grid) {
     }
 
     this.addPlayer = function(pid) {
-        if(pid == 0)
+        if(pid == 0 && that.players_init.indexOf(0) == -1)
             that.grid.bulkModify({
                 "1_1": {
                     type: 2,
@@ -60,7 +61,7 @@ exports.Map = function(grid) {
                     player: 0
                 }
             });
-        else if(pid ==1)
+        else if(pid == 1 && that.players_init.indexOf(1) == -1)
             that.grid.bulkModify({
                 "14_0": {
                     type: 1,
@@ -78,6 +79,9 @@ exports.Map = function(grid) {
                     player: 1
                 }
             });
+        
+        if(that.players_init.indexOf(pid) == -1)
+            that.players_init.push(pid);
     }
     // Events object
     this.events = {
