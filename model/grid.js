@@ -2,6 +2,7 @@ var events = require("events");
 var util = require("util");
 
 var Grid = function(name, map) {
+    var self = this;
     // Why does this have to be here?
     var Player = require("./user").Player;
 
@@ -157,8 +158,9 @@ var Grid = function(name, map) {
         
         // Let everyone know
         this.emit("addPlayer", pid);
-        // Increase the user count
+        // Increase the user count and cancel deletion
         this.num_users++;
+        clearTimeout(this.remove_timeout);
 
         // Set their color TODO: Is this used anywhere?
         user.color = this.map.colors[pid];
@@ -198,7 +200,7 @@ var Grid = function(name, map) {
                 delete this.users[i];
 
                 if(this.num_users == 0)
-                    return Grid.remove(this);
+                    return this.remove();
                 // See if we need a new host
                 if(this.host == user && this.num_users != 0) {
                     for(var new_host in this.users) break;
@@ -218,6 +220,13 @@ var Grid = function(name, map) {
         }
     }
 
+    this.remove = function() {
+        this.remove_timeout = setTimeout(function() {
+            console.log("[g:" + self.id + "] Deleting " + self.name);
+            delete(Grid.store[self.id]);
+        }, 60000);
+    }
+
     // Trigger an init event
     this.emit("init");
 }
@@ -235,16 +244,6 @@ Grid.getGrids = function() {
     }
 
     return send;
-}
-
-Grid.remove = function(grid) {
-    setTimeout(function() {
-        // If it has a user after a minute let it be.
-        if(grid == undefined || grid.num_users > 0)
-            return;
-        console.log("[g:" + grid.id + "] Deleting " + grid.name);
-        delete(Grid.store[grid.id]);
-    }, 60000);
 }
 
 /*
