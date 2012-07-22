@@ -16,6 +16,9 @@ var Grid = function(name, map) {
     Grid.store[this.id] = this;
     Grid.names.push(name);
 
+    // Log the fact that we exist
+    console.log("[gid:"+this.id+"] Created " + this.name);
+
     // Some placeholders
     this.users = {};
     this.matrix = {};
@@ -222,7 +225,7 @@ var Grid = function(name, map) {
 
     this.remove = function() {
         this.remove_timeout = setTimeout(function() {
-            console.log("[g:" + self.id + "] Deleting " + self.name);
+            console.log("[gid:" + self.id + "] Deleting " + self.name);
             delete(Grid.store[self.id]);
         }, 60000);
     }
