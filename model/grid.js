@@ -1,5 +1,6 @@
 var events = require("events");
 var util = require("util");
+var TileProps = require("./tileprops").TileProps;
 
 var Grid = function(name, map) {
     var self = this;
@@ -299,6 +300,12 @@ Grid.UserListeners = {
     },
     "g.sendChat": function(user, data) {
         user.grid.emit("newChat", user, data.msg.substring(0,140));
+    },
+    "g.placeTile": function(user, data) {
+        var coord = user.grid.getCoord(data.coord);
+        if(!coord.place(data.type, user))
+            return;
+        // Reduce cash here
     }
 }
 util.inherits(Grid, events.EventEmitter);
@@ -308,34 +315,55 @@ Grid.store = {};
 Grid.names = [];
 
 var Coord = function(grid, x, y) {
-    this.grid = grid;
+    var self = this;
+    self.grid = grid;
     // Ensure we're working with numbers
     if(typeof x != "number" || typeof y != "number")
         throw "Invalid coordinate";
-    this.x = x;
-    this.y = y;
+    self.x = x;
+    self.y = y;
 
     // Basic information
-    this.type = 0;
-    this.player = -1;
-    this.health = 0;
-    this.rot = 0;
+    self.type = 0;
+    self.player = -1;
+    self.health = 0;
+    self.rot = 0;
 
-    this.exists = function() {
-        return (this.type > 0) ? true : false;
+    self.exists = function() {
+        return (self.type > 0) ? true : false;
     }
 
-    this.baseInfo = function() {
+    // Places a tile type on this coordinate
+    // for a user. Returns true/false based on 
+    // whether or not the placement was a success
+    self.place = function(type, user) {
+        if(!TileProps[type].place(self.grid, self, user))
+            return false;
+
+        self.type = type;
+        self.health = self.getProperty("health");
+        self.player = user.player.id;
+
+        // Announce the change to the grid
+        self.grid.emit("updateCoord", self);
+    }
+
+    self.baseInfo = function() {
         return {
-            type: this.type,
-            player: this.player,
-            health: this.health,
-            rot: this.rot
+            type: self.type,
+            player: self.player,
+            health: self.health,
+            rot: self.rot
         }
     }
 
-    this.toString = function() {
-        return this.x + "_" + this.y;
+    self.toString = function() {
+        return self.x + "_" + self.y;
+    }
+
+    self.getProperty = function(key) {
+        if(TileProps[self.type] == undefined) return;
+        return TileProps[self.type][key];
     }
 }
 
