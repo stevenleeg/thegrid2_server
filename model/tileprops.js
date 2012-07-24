@@ -26,7 +26,17 @@ exports.TileProps = {
         // in addition to doing anything necessary upon placing
         // the tile.
         place: function(grid, coord, user) {
-            return true;
+            // TODO: Check to make sure they're placing around territory
+            user.send("g.updateTlim")
+            // Make sure they have enough territory
+            if(user.player.tused >= user.player.tlim)
+                return false;
+            // Add to tused
+            user.player.tused++;
+            user.send("g.setTerritory", {
+                tused: user.player.tused,
+                tlim: user.player.tlim
+            });
         }
     },
     

@@ -45,7 +45,13 @@ var Grid = function(name, map) {
     // Generate the players object
     this.players = {};
     for(var i=0; i < this.map.maxPlayers; i++) {
-        this.players[i] = new Player(i);
+        var player = this.players[i] = new Player(i);
+        
+        // Set some defaults
+        player.inc = this.map.init_inc;
+        player.tused = this.map.init_tused;
+        player.tlim = this.map.init_tlim;
+        player.cash = this.map.init_cash;
     }
 
     // Generate the matrix
@@ -295,17 +301,37 @@ Grid.UserListeners = {
             return;
         grid.emit("startGrid");
     },
+    // Send the user a grid and some of their stats
     "g.getDump": function(user, data) {
         user.send("g.setDump", user.grid.dump());
+        user.send("g.setCash", {
+            cash: user.player.cash
+        });
+        user.send("g.setTerritory", {
+            tused: user.player.tused,
+            tlim: user.player.tlim,
+        });
+        user.send("g.setIncome", {
+            income: user.player.inc
+        });
     },
     "g.sendChat": function(user, data) {
         user.grid.emit("newChat", user, data.msg.substring(0,140));
     },
     "g.placeTile": function(user, data) {
         var coord = user.grid.getCoord(data.coord);
+        // Make sure they have enough cash
+        if(user.player.cash < TileProps[data.type].price)
+            return;
+
         if(!coord.place(data.type, user))
             return;
-        // Reduce cash here
+        
+        // Subtract from their balance
+        user.player.cash -= coord.getProperty("price");
+        user.send("g.setCash", {
+            cash: user.player.cash
+        });
     }
 }
 util.inherits(Grid, events.EventEmitter);

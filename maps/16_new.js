@@ -7,6 +7,7 @@ exports.Map = function(grid) {
     this.maxPlayers = 4;
     this.autoGenerate = 1;
     this.tlim = 100;
+    this.init_inc = 0;
     this.init_tused = 3;
     this.init_tlim = 6;
     this.init_cash = 500;

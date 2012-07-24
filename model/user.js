@@ -55,13 +55,14 @@ User.uid = 0;
 User.store = {};
 
 var Player = function(pid) {
-    this.id = pid;
-    this.init = false;
+    var self = this;
+    self.id = pid;
+    self.init = false;
 
-    this.cash = 0;
-    this.inc = 0;
-    this.tlim = 0;
-    this.tused = 0;
+    self.cash = 0;
+    self.inc = 0;
+    self.tlim = 0;
+    self.tused = 0;
 }
 
 exports.User = User;
