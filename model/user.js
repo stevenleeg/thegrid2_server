@@ -61,6 +61,7 @@ var Player = function(pid) {
 
     self.cash = 0;
     self.inc = 0;
+    self.last_inc = 0; // The last time their income was added
     self.tlim = 0;
     self.tused = 0;
 }

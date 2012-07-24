@@ -78,12 +78,7 @@ var Grid = function(name, map) {
         // Does it already exist?
         if(this.matrix[x] != undefined && this.matrix[x][y] != undefined)
             return this.matrix[x][y];
-
-        // Ensure we're working only with ints
-        if(typeof x != "number" || typeof y != "number")
-            return false;
-
-        return this.matrix[x][y];
+        return undefined;
     }
 
     //
@@ -237,8 +232,28 @@ var Grid = function(name, map) {
         }, 60000);
     }
 
+    // Adds player's income to their cash
+    this.addIncome = function() {
+        var now = String(Math.round(new Date().getTime() / 1000));
+        for(var i in self.users) {
+            var user = self.users[i];
+
+            // Determine if they get their dough
+            if(user.player.inc == 0)
+                continue;
+            if(user.player.inc * 100 < user.player.cash)
+                continue;
+            if((now - user.player.last_inc) < Math.log(user.player.inc) / 2)
+                continue;
+
+            user.player.cash += user.player.inc;
+            user.send("g.setCash", { cash: user.player.cash });
+        }
+    }
+
     // Trigger an init event
     this.emit("init");
+    this.on("addIncome", this.addIncome);
 }
 
 Grid.getGrids = function() {

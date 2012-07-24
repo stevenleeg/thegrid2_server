@@ -5,6 +5,7 @@ var User = require("./model/user").User;
 var Grid = require("./model/grid").Grid;
 var EventManager = require("./utility/eventmanager").EventManager;
 var UserEvents = require("./utility/events").UserEvents;
+var Periodical = require("./utility/periodical").Periodical;
 
 var server = http.createServer(function(req, resp) {
     resp.writeHead(404);
@@ -47,6 +48,8 @@ srv.on("request", function(req) {
         connection.user.remove();
     });
 });
+
+var periodical = new Periodical();
 
 if(DEBUG) {
     var grid = new Grid("test", "16_new");
