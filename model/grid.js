@@ -359,12 +359,36 @@ var Coord = function(grid, x, y) {
         return (self.type > 0) ? true : false;
     }
 
+    // Scans around the coord for type by (optionally) owner
+    // If the type = 1 and owner != undefined it will return
+    // true for any type owner by owner
+    self.inRangeOf = function(type, owner) {
+        var selected;
+        // Start scanning
+        for(dir in Coord.compass) {
+            selected = self.direction(dir);
+            // Make sure the coord we're looking at is in the grid
+            if(selected == undefined) continue;
+            if(selected.type == type || (owner != undefined && type == 1)) {
+                if(owner != undefined && selected.player == owner) return true;
+                if(owner == undefined) return true;
+            }
+        }
+        return false;
+    }
+
+    self.direction = function(dir) {
+        return Coord.compass[dir](self);
+    }
+
     // Places a tile type on this coordinate
     // for a user. Returns true/false based on 
     // whether or not the placement was a success
     self.place = function(type, user) {
-        if(!TileProps[type].place(self.grid, self, user))
+        if(!TileProps[type].place(self.grid, self, user)) {
+            console.log("rejected!");
             return false;
+        }
 
         self.type = type;
         self.health = self.getProperty("health");
@@ -390,6 +414,39 @@ var Coord = function(grid, x, y) {
     self.getProperty = function(key) {
         if(TileProps[self.type] == undefined) return;
         return TileProps[self.type][key];
+    }
+}
+
+Coord.compass = {
+    "NE": function(coord) {
+        if(coord.y % 2 == 0)
+            return coord.grid.getCoord(coord.x, coord.y - 1);
+        else
+            return coord.grid.getCoord(coord.x + 1, coord.y - 1);
+    },
+    "NW": function(coord) {
+        if(coord.y % 2 == 0)
+            return coord.grid.getCoord(coord.x - 1, coord.y - 1);
+        else
+            return coord.grid.getCoord(coord.x, coord.y - 1);
+    },
+    "W": function(coord) {
+        return coord.grid.getCoord(coord.x - 1, coord.y);
+    },
+    "E": function(coord) {
+        return coord.grid.getCoord(coord.x + 1, coord.y);
+    },
+    "SE": function(coord) {
+        if(coord.y % 2 == 0)
+            return coord.grid.getCoord(coord.x, coord.y + 1);
+        else
+            return coord.grid.getCoord(coord.x + 1, coord.y + 1);
+    },
+    "SW": function(coord) {
+        if(coord.y % 2 == 0)
+            return coord.grid.getCoord(coord.x - 1, coord.y + 1);
+        else
+            return coord.grid.getCoord(coord.x, coord.y + 1);
     }
 }
 
