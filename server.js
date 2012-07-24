@@ -1,15 +1,22 @@
 var WebSocketServer = require("websocket").server;
-var Express = require("express");
+var http = require("http");
+
 var User = require("./model/user").User;
 var Grid = require("./model/grid").Grid;
 var EventManager = require("./utility/eventmanager").EventManager;
 var UserEvents = require("./utility/events").UserEvents;
 
-var app = Express.createServer();
-app.listen(8080);
+var server = http.createServer(function(req, resp) {
+    resp.writeHead(404);
+    resp.end();
+});
+server.listen(8080, function() {
+    console.log("[srv] Server ready");   
+});
 
 var srv = new WebSocketServer({
-    httpServer: app
+    httpServer: server,
+    autoAcceptConnections: false
 });
 
 // Load general events
@@ -18,6 +25,7 @@ srv.on("request", function(req) {
     try {
         var connection = req.accept("grid-1.0", req.origin);
     } catch(e) {
+        console.log("[svr] Rejecting connection");
         req.reject();
         return;
     }
@@ -37,5 +45,3 @@ srv.on("request", function(req) {
         connection.user.remove();
     });
 });
-
-console.log("[srv] Server ready");

@@ -2,8 +2,6 @@
     "name": "gridserver",
     "version": "0.0.1",
     "dependencies": {
-        "websocket": "latest",
-        "express": "latest",
-        "redis": "latest"
+        "websocket": "latest"
     }
 }
