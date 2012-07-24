@@ -19,6 +19,8 @@ var srv = new WebSocketServer({
     autoAcceptConnections: false
 });
 
+var DEBUG = true;
+
 // Load general events
 
 srv.on("request", function(req) {
@@ -45,3 +47,8 @@ srv.on("request", function(req) {
         connection.user.remove();
     });
 });
+
+if(DEBUG) {
+    var grid = new Grid("test", "16_new");
+    grid.active = true;
+}
