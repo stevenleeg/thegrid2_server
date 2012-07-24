@@ -10,6 +10,7 @@ var Grid = function(name, map) {
     this.name = name;
     this.num_users = 0;
     this.active = false;
+    this.infectors = [];
     
     // Generate an id
     this.id = Grid.uid;
@@ -251,9 +252,36 @@ var Grid = function(name, map) {
         }
     }
 
+    this.infect = function() {
+        for(var i in self.infectors) {
+            var infector = self.infectors[i];
+            
+            if(Math.round(new Date().getTime() / 1000) - infector.time < 3)
+                break;
+
+            // Look for territory or other infectors
+            var around = infector.around([1, 4]);
+            for(var i in around) {
+                var selected = around[i];
+                if(selected.player == infector.player)
+                    continue;
+
+                selected.player = infector.player;
+                self.emit("updateCoord", selected);
+            }
+            
+            // Remove the infector
+            infector.type = 1;
+            self.emit("updateCoord", infector);
+            self.infectors.splice(self.infectors.indexOf(infector), 1);
+            delete(infector.time);
+        }
+    }
+
     // Trigger an init event
     this.emit("init");
     this.on("addIncome", this.addIncome);
+    this.on("infect", this.infect);
 }
 
 Grid.getGrids = function() {
@@ -392,6 +420,26 @@ var Coord = function(grid, x, y) {
         return false;
     }
 
+    // Returns all coords around self. It can also
+    // filter out coords by type/owner if given
+    self.around = function(type, owner) {
+        var selected, pts;
+        // Type can be an array of types
+        if(typeof(type) == "number")
+            type = [type];
+        // Start scanning
+        pts = [];
+        for(dir in Coord.compass) {
+            selected = this.direction(dir);
+            // Make sure the coord we're looking at is in the grid
+            if(selected == undefined) continue; 
+            if(type && type.indexOf(selected.type) == -1) continue;
+            if(owner && selected.player != owner) continue;
+            pts.push(selected);
+        }
+        return pts;
+    }
+
     self.direction = function(dir) {
         return Coord.compass[dir](self);
     }
@@ -403,7 +451,7 @@ var Coord = function(grid, x, y) {
         if(!TileProps[type].place(self.grid, self, user))
             return false;
 
-        self.type = type;
+        self.type = parseInt(type);
         self.health = self.getProperty("health");
         self.player = user.player.id;
 
@@ -429,6 +477,13 @@ var Coord = function(grid, x, y) {
     self.getProperty = function(key) {
         if(TileProps[self.type] == undefined) return;
         return TileProps[self.type][key];
+    }
+
+    // Basically we replace us with a new coord instance
+    self.remove = function() {
+        var next = self.grid.matrix[self.x][self.y] = new Coord(self.grid, self.x, self.y);
+        self.grid.emit("updateCoord", next);
+        delete(self);
     }
 }
 

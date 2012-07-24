@@ -79,7 +79,14 @@ exports.TileProps = {
     4: {
         health: 25,
         price: 50,
-        place: default_check
+        place: function(grid, coord, user) {
+            if(!default_check(grid, coord, user)) return false;
+
+            coord.time = Math.round(new Date().getTime() / 1000);
+            grid.infectors.push(coord);
+
+            return true;
+        }
     },
 
     // House
