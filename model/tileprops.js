@@ -79,9 +79,7 @@ exports.TileProps = {
     4: {
         health: 25,
         price: 50,
-        place: function(grid, coord, user) {
-            return true;
-        }
+        place: default_check
     },
 
     // House
@@ -89,6 +87,17 @@ exports.TileProps = {
         health: 50,
         price: 50,
         place: function(grid, coord, user) {
+            if(!default_check(grid, coord, user)) return false;
+
+            user.player.tlim += 4;
+            if(user.player.tlm > grid.map.tlim)
+                user.player.tlim = grid.map.tlim;
+
+            user.send("g.setTerritory", {
+                tuser: user.player.tused,
+                tlim: user.player.tlim
+            });
+
             return true;
         }
     },
@@ -97,44 +106,34 @@ exports.TileProps = {
     6: {
         health: 50,
         price: 200,
-        place: function(grid, coord, user) {
-            return true;
-        }
+        place: default_check
     },
 
     // Wall
     7: {
         health: 50,
         price: 100,
-        place: function(grid, coord, user) {
-            return true;
-        }
+        place: default_check
     },
 
     // Defender
     8: {
         health: 25,
         price: 25,
-        place: function(grid, coord, user) {
-            return true;
-        }
+        place: default_check
     },
 
     // Shield
     9: {
         health: 25,
         price: 200,
-        place: function(grid, coord, user) {
-            return true;
-        }
+        place: default_check
     },
 
     // Cannon
     10: {
         health: 50,
         price: 200,
-        place: function(grid, coord, user) {
-            return true;
-        }
+        place: default_check
     }
 };
