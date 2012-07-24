@@ -385,10 +385,8 @@ var Coord = function(grid, x, y) {
     // for a user. Returns true/false based on 
     // whether or not the placement was a success
     self.place = function(type, user) {
-        if(!TileProps[type].place(self.grid, self, user)) {
-            console.log("rejected!");
+        if(!TileProps[type].place(self.grid, self, user))
             return false;
-        }
 
         self.type = type;
         self.health = self.getProperty("health");
@@ -396,6 +394,8 @@ var Coord = function(grid, x, y) {
 
         // Announce the change to the grid
         self.grid.emit("updateCoord", self);
+
+        return true;
     }
 
     self.baseInfo = function() {
