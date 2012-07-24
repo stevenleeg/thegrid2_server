@@ -448,12 +448,14 @@ var Coord = function(grid, x, y) {
     // for a user. Returns true/false based on 
     // whether or not the placement was a success
     self.place = function(type, user) {
-        if(!TileProps[type].place(self.grid, self, user))
+        if(!TileProps[type].placeTest(self, user))
             return false;
 
         self.type = parseInt(type);
         self.health = self.getProperty("health");
         self.player = user.player.id;
+        if(TileProps[type].onPlace != undefined)
+            TileProps[type].onPlace(self, user);
 
         // Announce the change to the grid
         self.grid.emit("updateCoord", self);

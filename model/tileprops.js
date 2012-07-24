@@ -11,7 +11,7 @@ var UpdateManager = require("../utility/updatemanager").UpdateManager;
 // The first tile (territory) has been documented to
 // display most of the features of this object.
 //
-var default_check = function(grid, coord, user) {
+var default_check = function(coord, user) {
     if(coord.player == user.player.id && coord.type == 1) return true;
     else return false;
 }
@@ -24,26 +24,28 @@ exports.TileProps = {
         price: 25,
         override: false, // This type can NOT be placed over existing tiles
 
-        // The place event. This is called whenever a 
+        // The place check. This is called whenever a 
         // user attempts to place the tile. The function's
         // job is to determine whether or not the user is
-        // even allowed to place the tile (returning true/false)
-        // in addition to doing anything necessary upon placing
-        // the tile.
-        place: function(grid, coord, user) {
+        // allowed to place the tile (returning true/false)
+        placeTest: function(coord, user) {
             // Make sure there's territory around
             if(!coord.inRangeOf(1, user.player.id) || coord.exists()) return false;
             // Make sure they have enough territory
             if(user.player.tused >= user.player.tlim)
                 return false;
+
+            return true;
+        },
+        // The onPlace event is called after a tile has been placed.
+        // Its job is to perform any additional tasks
+        onPlace: function(coord, user) {
             // Add to tused
             user.player.tused++;
             user.send("g.setTerritory", {
                 tused: user.player.tused,
                 tlim: user.player.tlim
             });
-
-            return true;
         }
     },
     
@@ -51,27 +53,26 @@ exports.TileProps = {
     2: {
         health: 100,
         price: 100,
-        place: function(grid, coord, user) {
-            return false;
-        }
+        placeTest: function() { return false; }
     },
 
     // Miner
     3: {
         health: 50,
         price: 100,
-        place: function(grid, coord, user) {
+        placeTest: function(coord, user) {
             // Make sure they're in range of a mine
             if(!coord.inRangeOf(99) || !coord.player == user.player.id)
                 return false;
             
+            return true;
+        },
+        onPlace: function(coord, user) {
             // Increase their income
             user.player.inc += 5;
             user.send("g.setIncome", {
                 income: user.player.inc
             });
-
-            return true;
         }
     },
 
@@ -79,13 +80,10 @@ exports.TileProps = {
     4: {
         health: 25,
         price: 50,
-        place: function(grid, coord, user) {
-            if(!default_check(grid, coord, user)) return false;
-
+        placeTest: default_check,
+        onPlace: function(coord, user) {
             coord.time = Math.round(new Date().getTime() / 1000);
-            grid.infectors.push(coord);
-
-            return true;
+            coord.grid.infectors.push(coord);
         }
     },
 
@@ -93,19 +91,16 @@ exports.TileProps = {
     5: {
         health: 50,
         price: 50,
-        place: function(grid, coord, user) {
-            if(!default_check(grid, coord, user)) return false;
-
+        placeTest: default_check,
+        place: function(coord, user) {
             user.player.tlim += 4;
-            if(user.player.tlm > grid.map.tlim)
-                user.player.tlim = grid.map.tlim;
+            if(user.player.tlm > coord.grid.map.tlim)
+                user.player.tlim = coord.grid.map.tlim;
 
             user.send("g.setTerritory", {
                 tuser: user.player.tused,
                 tlim: user.player.tlim
             });
-
-            return true;
         }
     },
 
@@ -113,34 +108,34 @@ exports.TileProps = {
     6: {
         health: 50,
         price: 200,
-        place: default_check
+        placeTest: default_check
     },
 
     // Wall
     7: {
         health: 50,
         price: 100,
-        place: default_check
+        placeTest: default_check
     },
 
     // Defender
     8: {
         health: 25,
         price: 25,
-        place: default_check
+        placeTest: default_check
     },
 
     // Shield
     9: {
         health: 25,
         price: 200,
-        place: default_check
+        placeTest: default_check
     },
 
     // Cannon
     10: {
         health: 50,
         price: 200,
-        place: default_check
+        placeTest: default_check
     }
 };
