@@ -11,6 +11,11 @@ var UpdateManager = require("../utility/updatemanager").UpdateManager;
 // The first tile (territory) has been documented to
 // display most of the features of this object.
 //
+var default_check = function(grid, coord, user) {
+    if(coord.player == user.player.id && coord.type == 1) return true;
+    else return false;
+}
+
 exports.TileProps = {
     // Territory
     1: {
@@ -26,7 +31,8 @@ exports.TileProps = {
         // in addition to doing anything necessary upon placing
         // the tile.
         place: function(grid, coord, user) {
-            // TODO: Check to make sure they're placing around territory
+            // Make sure there's territory around
+            if(!coord.inRangeOf(1, user.player.id) || coord.exists()) return false;
             // Make sure they have enough territory
             if(user.player.tused >= user.player.tlim)
                 return false;
@@ -55,7 +61,16 @@ exports.TileProps = {
         health: 50,
         price: 100,
         place: function(grid, coord, user) {
-            // CHECK FOR MINES
+            // Make sure they're in range of a mine
+            if(!coord.inRangeOf(99) || !coord.player == user.player.id)
+                return false;
+            
+            // Increase their income
+            user.player.inc += 5;
+            user.send("g.setIncome", {
+                income: user.player.inc
+            });
+
             return true;
         }
     },
