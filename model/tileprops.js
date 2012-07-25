@@ -23,6 +23,7 @@ exports.TileProps = {
         health: 25,
         price: 25,
         override: false, // This type can NOT be placed over existing tiles
+        damage: false, // Whether or not it can be hit by a damager
 
         // The place check. This is called whenever a 
         // user attempts to place the tile. The function's
@@ -53,13 +54,15 @@ exports.TileProps = {
     2: {
         health: 100,
         price: 100,
-        placeTest: function() { return false; }
+        placeTest: function() { return false; },
+        damage: true
     },
 
     // Miner
     3: {
         health: 50,
         price: 100,
+        damage: true,
         placeTest: function(coord, user) {
             // Make sure they're in range of a mine
             if(!coord.inRangeOf(99) || !coord.player == user.player.id)
@@ -80,6 +83,7 @@ exports.TileProps = {
     4: {
         health: 25,
         price: 50,
+        damage: true,
         placeTest: default_check,
         onPlace: function(coord, user) {
             coord.time = Math.round(new Date().getTime() / 1000);
@@ -91,6 +95,7 @@ exports.TileProps = {
     5: {
         health: 50,
         price: 50,
+        damage: true,
         placeTest: default_check,
         place: function(coord, user) {
             user.player.tlim += 4;
@@ -108,13 +113,18 @@ exports.TileProps = {
     6: {
         health: 50,
         price: 200,
-        placeTest: default_check
+        damage: true,
+        placeTest: default_check,
+        onPlace: function(coord, user) {
+            coord.grid.damagers.push(coord);
+        }
     },
 
     // Wall
     7: {
         health: 50,
         price: 100,
+        damage: true,
         placeTest: default_check
     },
 
@@ -122,13 +132,15 @@ exports.TileProps = {
     8: {
         health: 25,
         price: 25,
-        placeTest: default_check
+        damage: true,
+        placeTest: default_check,
     },
 
     // Shield
     9: {
         health: 25,
         price: 200,
+        damage:true,
         placeTest: default_check
     },
 
@@ -136,6 +148,7 @@ exports.TileProps = {
     10: {
         health: 50,
         price: 200,
+        damage: true,
         placeTest: default_check
     }
 };

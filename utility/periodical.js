@@ -18,7 +18,12 @@ exports.Periodical = function() {
     self.emitInfector = function() {
         self.gridEmit("infect");
     }
+
+    self.emitDamager = function() {
+        self.gridEmit("damage");
+    }
     
     self.int_emit_income = setInterval(self.emitIncome, 1000);
     self.int_emit_infector = setInterval(self.emitInfector, 1000);
+    self.int_emit_damanger = setInterval(self.emitDamager, 1000);
 }

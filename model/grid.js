@@ -11,6 +11,7 @@ var Grid = function(name, map) {
     this.num_users = 0;
     this.active = false;
     this.infectors = [];
+    this.damagers = [];
     
     // Generate an id
     this.id = Grid.uid;
@@ -278,10 +279,36 @@ var Grid = function(name, map) {
         }
     }
 
+    this.damage = function() {
+        for(var i in self.damagers) {
+            var damager = self.damagers[i];
+
+            var around = damager.around();
+            for(var i in around) {
+                var selected = around[i];
+
+                // Make sure we can damage it
+                if(!selected.getProperty("damage"))
+                    continue;
+                if(selected.player == damager.player)
+                    continue;
+                // Yep, so let's hurt it.
+                selected.damage(10);
+            }
+
+            // Damage/remove the damager
+            damager.damage(10);
+            if(damager.type != 6) {
+                self.damagers.splice(self.damagers.indexOf(damager), 1);
+            }
+        }
+    }
+
     // Trigger an init event
     this.emit("init");
     this.on("addIncome", this.addIncome);
     this.on("infect", this.infect);
+    this.on("damage", this.damage);
 }
 
 Grid.getGrids = function() {
@@ -479,6 +506,26 @@ var Coord = function(grid, x, y) {
     self.getProperty = function(key) {
         if(TileProps[self.type] == undefined) return;
         return TileProps[self.type][key];
+    }
+
+    // Reduces the health by amt and destroys the coord
+    // if health goes below 0
+    self.damage = function(amt) {
+        self.health -= amt;
+        if(self.health <= 0)
+            return self.clear();
+
+        self.grid.emit("updateCoord", self);
+    }
+
+    // Returns it to a territory
+    self.clear = function() {
+        if(self.player == -1)
+            return;
+        self.type = 1;
+        self.health = 25;
+
+        self.grid.emit("updateCoord", self);
     }
 
     // Basically we replace us with a new coord instance
