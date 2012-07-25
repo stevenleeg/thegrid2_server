@@ -12,6 +12,8 @@ var Grid = function(name, map) {
     this.active = false;
     this.infectors = [];
     this.damagers = [];
+    this.defenders = [];
+    this.defend_store = {};
     
     // Generate an id
     this.id = Grid.uid;
@@ -304,11 +306,24 @@ var Grid = function(name, map) {
         }
     }
 
+    this.defend = function() {
+        for(var i in self.defenders) {
+            var defender = self.defenders[i];
+
+            if(Math.round(new Date().getTime() / 1000) - defender.time < 3)
+                break;
+
+            self.defenders.splice(self.defenders.indexOf(defender), 1);
+            defender.clear();
+        }
+    }
+
     // Trigger an init event
     this.emit("init");
     this.on("addIncome", this.addIncome);
     this.on("infect", this.infect);
     this.on("damage", this.damage);
+    this.on("defend", this.defend);
 }
 
 Grid.getGrids = function() {
@@ -522,10 +537,13 @@ var Coord = function(grid, x, y) {
     self.clear = function() {
         if(self.player == -1)
             return;
+        var old = self.type;
         self.type = 1;
         self.health = 25;
 
         self.grid.emit("updateCoord", self);
+        if(TileProps[old].onDestroy != undefined)
+            TileProps[old].onDestroy(self);
     }
 
     // Basically we replace us with a new coord instance

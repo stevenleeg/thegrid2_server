@@ -133,7 +133,31 @@ exports.TileProps = {
         health: 25,
         price: 25,
         damage: true,
-        placeTest: default_check,
+        placeTest: function(coord, user) {
+            if(coord.player != user.player.id)
+                return false;
+            if(coord.type == 8)
+                return false;
+
+            // Store the old coord for future use
+            coord.grid.defend_store[coord.toString()] = coord.baseInfo();
+
+            return true;
+        },
+        onPlace: function(coord, user) {
+            coord.time = Math.round(new Date().getTime() / 1000);
+            coord.grid.defenders.push(coord);
+        },
+        onDestroy: function(coord) {
+            var old = coord.grid.defend_store[coord.toString()];
+            //coord.grid.matrix[coord.x][coord.y] = old;
+            coord.type = old.type;
+            coord.player = old.player;
+            coord.health = old.health;
+
+            coord.grid.emit("updateCoord", coord);
+            delete(coord.grid.defend_store[coord.toString()]);
+        }
     },
 
     // Shield
