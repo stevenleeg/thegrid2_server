@@ -165,7 +165,27 @@ exports.TileProps = {
         health: 25,
         price: 200,
         damage:true,
-        placeTest: default_check
+        placeTest: default_check,
+        onPlace: function(coord, user) {
+            var around = coord.around();
+            for(var i in around) {
+                var selected = around[i];
+                if(selected.player == user.player.id) {
+                    selected.health += 50;
+                    selected.grid.emit("updateCoord", selected);
+                }
+            }
+        },
+        onDestroy: function(coord) {
+            var around = coord.around();
+            for(var i in around) {
+                var selected = around[i];
+                if (coord.player == selected.player && selected.health > exports.TileProps[selected.type].health) {
+                        selected.health -= 50;
+                        selected.grid.emit("updateCoord", selected);
+                }
+            }
+        }
     },
 
     // Cannon
