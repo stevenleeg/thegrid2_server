@@ -58,6 +58,7 @@ var Player = function(pid) {
     var self = this;
     self.id = pid;
     self.init = false;
+    self.user = null;
 
     self.cash = 0;
     self.inc = 0;

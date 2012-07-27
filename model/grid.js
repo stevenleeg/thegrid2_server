@@ -176,6 +176,7 @@ var Grid = function(name, map) {
         this.users[pid] = user;
 
         // Set up the player
+        this.players[pid].user = user;
         user.player = this.players[pid];
         user.player.active = true;
 
@@ -204,6 +205,7 @@ var Grid = function(name, map) {
                 this.num_users--;
 
                 // Remove some properties from the user
+                user.player.user = null;
                 user.player.active = false;
                 user.player = undefined;
                 delete this.users[i];
@@ -268,6 +270,14 @@ var Grid = function(name, map) {
                 var selected = around[i];
                 if(selected.player == infector.player)
                     continue;
+
+                // Subtract territory
+                var victim = self.players[selected.player];
+                victim.tused--;
+                victim.user.send("g.setTerritory", {
+                    tused: victim.tused,
+                    tlim: victim.tlim
+                });
 
                 selected.player = infector.player;
                 self.emit("updateCoord", selected);
