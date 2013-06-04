@@ -12,6 +12,8 @@ var server = http.createServer(function(req, resp) {
     resp.end();
 });
 server.listen(8080, function() {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end("Just a server!")
     console.log("[srv] Server ready");   
 });
 
